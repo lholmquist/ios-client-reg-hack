@@ -54,7 +54,6 @@ static NSString * const kQuickieAPIBaseURLString = @"http://todo-aerogear.rhclou
         }];
 
         // ..add your own pipes here
-
         // inform client that we have successfully logged in
         success();
 

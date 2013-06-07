@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AeroGearPush.h"
 
 @interface LPHAppDelegate : UIResponder <UIApplicationDelegate>
 

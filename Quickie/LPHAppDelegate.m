@@ -23,8 +23,60 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
     self.window.rootViewController = self.navigationController;
 
     [self.window makeKeyAndVisible];
+    
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    
     return YES;
 }
+
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    
+    NSString *token = [[deviceToken description] stringByTrimmingCharactersInSet:      [NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSLog(@"content---%@", token);
+    
+    //set up notifications
+    AGDeviceRegistration *registration =
+    [[AGDeviceRegistration alloc] initWithServerURL:[NSURL URLWithString:@"https://keynotepushserver-lholmqui.rhcloud.com/ag-push/"]];
+    
+    [registration registerWithClientInfo:^(id<AGClientDeviceInformation> clientInfo) {
+        
+        // apply the desired info:
+        clientInfo.token = token;
+        clientInfo.mobileVariantID = @"8a5659fc3f193790013f200739ec0003";
+        clientInfo.mobileVariantInstanceID = @"8a5659fc3f193790013f200bee8f0004";
+        clientInfo.deviceType = @"iPhone";
+//        clientInfo.operatingSystem = @"iOS";
+  //      clientInfo.osVersion = @"6.1.3";
+//        clientInfo.alias = @"lholmqui@redhat.com";
+        
+    } success:^(id responseObject) {
+        NSLog(@"\n%@", responseObject);
+    } failure:^(NSError *error) {
+        NSLog(@"\nERROR");
+    }];
+    
+}
+
+-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    NSLog([userInfo description]);
+    
+    NSDictionary *aps = [userInfo valueForKey:@"aps"];
+    
+    NSString *msg = [aps valueForKey:@"alert"];
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Message"
+                                                    message:msg
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+
+    
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -51,5 +103,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 
 @end

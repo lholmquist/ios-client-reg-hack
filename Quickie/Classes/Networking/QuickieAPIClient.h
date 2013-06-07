@@ -5,6 +5,7 @@
 //
 
 #import "AeroGear.h"
+#import "AeroGearPush.h"
 
 @interface QuickieAPIClient : NSObject
 
