@@ -27,6 +27,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
+    NSDictionary* userInfo = [launchOptions valueForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
+    NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
+    if( [apsInfo objectForKey:@"alert"] != NULL)
+    {
+        [self showAlert:[apsInfo objectForKey:@"aps"]];
+    }
+    
     return YES;
 }
 
@@ -48,9 +55,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
         clientInfo.mobileVariantID = @"8a5659fc3f193790013f200739ec0003";
         clientInfo.mobileVariantInstanceID = @"8a5659fc3f193790013f200bee8f0004";
         clientInfo.deviceType = @"iPhone";
-//        clientInfo.operatingSystem = @"iOS";
-  //      clientInfo.osVersion = @"6.1.3";
-//        clientInfo.alias = @"lholmqui@redhat.com";
         
     } success:^(id responseObject) {
         NSLog(@"\n%@", responseObject);
@@ -62,9 +66,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog([userInfo description]);
+        
+    [self showAlert:[userInfo valueForKey:@"aps"]];
     
-    NSDictionary *aps = [userInfo valueForKey:@"aps"];
     
+}
+
+-(void) showAlert:(NSDictionary *) aps {
     NSString *msg = [aps valueForKey:@"alert"];
     
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Message"
@@ -74,7 +82,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
                                           otherButtonTitles:nil];
     [alert show];
 
-    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
